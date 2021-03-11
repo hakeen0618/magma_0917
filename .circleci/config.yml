@@ -480,7 +480,7 @@ jobs:
           name: Testing slack webhook and exiting on purpose.
           command: |
             cd ${MAGMA_ROOT}/orc8r/cloud/docker
-            echo "Testing slack. Exiting 1 on purpose." 
+            echo "Testing slack webhook ${SLACK_WEBHOOK} on channel ${DEFAULT_SLACK_CHANNEL}. Exiting 1 on purpose." 
             exit 1
       - magma_slack_notify
     
