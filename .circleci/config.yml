@@ -467,6 +467,23 @@ commands:
             curl -X POST -H 'Content-type: application/json' --data "${slack_data}" "${SLACK_WEBHOOK}"
 
 jobs:
+  ### Test Slack
+  test-slack:
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
+    environment:
+      MAGMA_ROOT: /home/circleci/project
+    steps:
+      - checkout
+      - run:
+          name: Testing slack webhook and exiting on purpose.
+          command: |
+            cd ${MAGMA_ROOT}/orc8r/cloud/docker
+            echo "Testing slack. Exiting 1 on purpose." 
+            exit 1
+      - magma_slack_notify
+    
   ### CLOUD
 
   cloud-test:
@@ -1060,12 +1077,4 @@ workflows:
 
   testslack:
     jobs:
-      steps:
-         - checkout
-         - run:
-             name: Testing slack webhook and exiting on purpose.
-             command: |
-                  echo "Doing an exit 1 now to test slack webhook - ${DEFAULT_SLACK_CHANNEL} "
-                  exit 1
-         - magma_slack_notify
-
+      - test-slack
