@@ -6,5 +6,7 @@ jobs:
     runs-on: self-hosted
     name: Test echo
     steps:
-      run: |
-        echo "Hello I'm github Action" >> /tmp/github_action.hello
+      -
+        name: Test Echo
+        run: |
+          echo "Hello I'm github Action" >> /tmp/github_action.hello
