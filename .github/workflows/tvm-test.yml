@@ -1,0 +1,10 @@
+name: TVM test
+on: [push]
+
+jobs:
+  tvm_test:
+    runs-on: self-hosted
+    name: Test echo
+    steps:
+      run: |
+        echo "Hello I'm github Action" >> /tmp/github_action.hello
