@@ -23,7 +23,7 @@ type PowerControlParameters struct {
 	// pb
 	// Maximum: 3
 	// Minimum: 0
-	Pb *int32 `json:"pb,omitempty"`
+	Pb *uint32 `json:"pb,omitempty"`
 
 	// reference signal power
 	ReferenceSignalPower int32 `json:"reference_signal_power,omitempty"`

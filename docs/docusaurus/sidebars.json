@@ -233,7 +233,8 @@
         "label": "General",
         "ids": [
           "resources/ref_pcap",
-          "resources/ref_useful_links"
+          "resources/ref_useful_links",
+          "resources/ref_magma_metrics"
         ]
       },
       {
@@ -252,11 +253,13 @@
         "type": "subcategory",
         "label": "Orchestrator",
         "ids": [
+          "orc8r/dev_rest_api",
           "orc8r/dev_build",
           "orc8r/dev_testing",
           "orc8r/dev_minikube",
           "orc8r/dev_security",
           "orc8r/dev_indexers",
+          "orc8r/dev_sub_digests",
           "orc8r/dev_dependencies",
           "orc8r/dev_aws_stack"
         ]
@@ -266,8 +269,23 @@
         "label": "NMS",
         "ids": [
           "nms/dev_spacing",
+          "nms/dev_testing",
           "nms/dev_themes",
           "nms/dev_components"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Federation Gateway",
+        "ids": [
+          "feg/dev_testing"
+        ]
+      },
+      {
+        "type": "subcategory",
+        "label": "Carrier WiFi",
+        "ids": [
+          "cwf/dev_testing"
         ]
       }
     ],
@@ -286,7 +304,8 @@
       "proposals/p014_proposal_process",
       "proposals/p015_tech_debt_week",
       "proposals/p016_nms_regression_testing",
-      "proposals/p017_apn_refactoring"
+      "proposals/p017_apn_refactoring",
+      "proposals/p018_control_network_metrics"
     ],
     "FAQ": [
       "faq/faq_magma"
