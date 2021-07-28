@@ -72,6 +72,19 @@ message EnodebD {
         int32 cell_id = 9;
         string ip_address = 10;
         string mme_ip = 11;
+        RadioConfiguration radioConfig =12;
+        PowerControlParameters power_control_param =13;
+        message RadioConfiguration{
+          string plmn_id = 8;
+          string mme_pool_1 =9;
+          string mme_pool_2 =10;
+        }
+        message PowerControlParameters{
+          int32 reference_signal_power =11;
+          string powerClass =12;
+          int32 pb =13;
+          int32 pa =14;
+        }
     }
 
     orc8r.LogLevel log_level = 1;
@@ -100,6 +113,7 @@ message EnodebD {
     TDDConfig tdd_config = 12;
     FDDConfig fdd_config = 13;
     map<string, EnodebConfig> enb_configs_by_serial = 14;
+
 }
 
 //------------------------------------------------------------------------------

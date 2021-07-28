@@ -19,6 +19,9 @@ import (
 // swagger:model enodeb_configuration
 type EnodebConfiguration struct {
 
+	// radio configuration
+	RadioConfiguration *RadioConfiguration `json:"RadioConfiguration,omitempty"`
+
 	// bandwidth mhz
 	// Enum: [3 5 10 15 20]
 	BandwidthMhz uint32 `json:"bandwidth_mhz,omitempty"`
@@ -39,6 +42,7 @@ type EnodebConfiguration struct {
 	// mme ip
 	// Format: ipv4
 	MmeIP strfmt.IPv4 `json:"mme_ip,omitempty"`
+
 	// pci
 	// Maximum: 503
 	// Minimum: > 0
@@ -66,6 +70,10 @@ type EnodebConfiguration struct {
 func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateRadioConfiguration(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateBandwidthMhz(formats); err != nil {
 		res = append(res, err)
 	}
@@ -77,6 +85,7 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	if err := m.validateDeviceClass(formats); err != nil {
 		res = append(res, err)
 	}
+
 	if err := m.validateMmeIP(formats); err != nil {
 		res = append(res, err)
 	}
@@ -104,6 +113,24 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *EnodebConfiguration) validateRadioConfiguration(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RadioConfiguration) { // not required
+		return nil
+	}
+
+	if m.RadioConfiguration != nil {
+		if err := m.RadioConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("RadioConfiguration")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -218,6 +245,7 @@ func (m *EnodebConfiguration) validateMmeIP(formats strfmt.Registry) error {
 
 	return nil
 }
+
 func (m *EnodebConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Pci) { // not required
