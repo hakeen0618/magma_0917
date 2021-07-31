@@ -7338,6 +7338,20 @@ definitions:
     required:
     - active_gateway
     type: object
+  cellConfiguration:
+    description: cell Configuration for  eNodeb devices.
+    minLength: 1
+    properties:
+      mme_pool_1:
+        example: ""
+        type: string
+      mme_pool_2:
+        example: ""
+        type: string
+      plmn_id:
+        example: "00101"
+        type: string
+    type: object
   cellular_gateway_pool:
     description: Highly available gateway pool in an LTE network
     properties:
@@ -8042,6 +8056,8 @@ definitions:
         maximum: 503
         minimum: 0
         type: integer
+      radioConfiguration:
+        $ref: '#/definitions/radioConfiguration'
       special_subframe_pattern:
         example: 7
         format: uint32
@@ -10857,6 +10873,25 @@ definitions:
     - flow_list
     - priority
     type: object
+  powerControlParameters:
+    description: power control param Configuration for  eNodeb devices.
+    minLength: 1
+    properties:
+      pa:
+        example: -3
+        format: int32
+        type: integer
+      pb:
+        example: 0
+        format: int32
+        maximum: 3
+        minimum: 0
+        type: integer
+      reference_signal_power:
+        example: 12
+        format: int32
+        type: integer
+    type: object
   prom_alert_config:
     properties:
       alert:
@@ -11085,6 +11120,15 @@ definitions:
         maximum: 15
         minimum: 0
         type: integer
+    type: object
+  radioConfiguration:
+    description: Radio Configuration for  eNodeb devices.
+    minLength: 1
+    properties:
+      cellConfiguration:
+        $ref: '#/definitions/cellConfiguration'
+      powerControlParameters:
+        $ref: '#/definitions/powerControlParameters'
     type: object
   radius_config:
     description: built-in radius server configuration

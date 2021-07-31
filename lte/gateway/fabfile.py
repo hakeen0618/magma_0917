@@ -234,7 +234,7 @@ def integ_test(
 
     # Setup the gateway: use the provided gateway if given, else default to the
     # vagrant machine
-    gateway_ip = '192.168.60.142'
+    gateway_ip = '192.168.8.178'
 
     if not gateway_host:
         gateway_host = vagrant_setup(
@@ -303,7 +303,7 @@ def run_integ_tests(tests=None):
     $ make integ_test TESTS=s1aptests/test_attach_detach.py
     """
     test_host = vagrant_setup("magma_test", destroy_vm=False)
-    gateway_ip = '192.168.60.142'
+    gateway_ip = '192.168.8.178'
     if tests:
         tests = "TESTS=" + tests
 
@@ -439,7 +439,7 @@ def load_test(gateway_host=None, destroy_vm=True):
         gateway_ip = gateway_host.split('@')[1].split(':')[0]
     else:
         gateway_host = vagrant_setup('magma', destroy_vm)
-        gateway_ip = '192.168.60.142'
+        gateway_ip = '192.168.8.178'
 
     execute(_build_magma)
     execute(_start_gateway)
@@ -551,7 +551,7 @@ def _make_integ_tests():
         run('make')
 
 
-def _run_integ_tests(gateway_ip='192.168.60.142', tests=None):
+def _run_integ_tests(gateway_ip='192.168.8.178', tests=None):
     """ Run the integration tests
 
     For now, just run a single basic test
@@ -588,7 +588,7 @@ def _run_integ_tests(gateway_ip='192.168.60.142', tests=None):
     )
 
 
-def _run_load_tests(gateway_ip='192.168.60.142'):
+def _run_load_tests(gateway_ip='192.168.8.178'):
     """
     Run the load tests on given gateway IP.
 

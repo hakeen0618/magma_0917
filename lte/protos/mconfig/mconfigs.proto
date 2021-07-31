@@ -71,6 +71,24 @@ message EnodebD {
         int32 tac = 8;
         int32 cell_id = 9;
         string ip_address = 10;
+        RadioConfiguration radioConfig = 11;
+
+        message RadioConfiguration{
+          PowerControlParameters power_control_param = 1;
+          CellConfiguration cell_config = 2;
+        }
+        message PowerControlParameters{
+          int32 reference_signal_power = 11;
+          string powerClass = 12;
+          int32 pb = 13;
+          int32 pa = 14;
+        }
+        message CellConfiguration{
+          string plmn_id = 8;
+          string mme_pool_1 = 9;
+          string mme_pool_2 = 10;
+          string mme_ip = 11;
+        }
     }
 
     orc8r.LogLevel log_level = 1;
@@ -354,7 +372,7 @@ message MME {
 
     // sentry_config stores the Sentry.io configuration for this service
     SentryConfig sentry_config = 45;
-    
+
     bool enable_converged_core = 46;
 }
 
