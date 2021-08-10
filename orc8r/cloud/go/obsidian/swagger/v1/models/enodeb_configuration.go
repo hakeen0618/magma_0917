@@ -36,10 +36,17 @@ type ENODEBConfiguration struct {
 	// earfcndl
 	Earfcndl uint32 `json:"earfcndl,omitempty"`
 
+	// mme ip
+	// Format: ipv4
+	MmeIP strfmt.IPv4 `json:"mme_ip,omitempty"`
+
 	// pci
 	// Maximum: 503
 	// Minimum: > 0
 	Pci uint32 `json:"pci,omitempty"`
+
+	// radio configuration
+	RadioConfiguration *RadioConfiguration `json:"radioConfiguration,omitempty"`
 
 	// special subframe pattern
 	// Maximum: 9
@@ -75,7 +82,15 @@ func (m *ENODEBConfiguration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateMmeIP(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePci(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRadioConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -200,6 +215,19 @@ func (m *ENODEBConfiguration) validateDeviceClass(formats strfmt.Registry) error
 	return nil
 }
 
+func (m *ENODEBConfiguration) validateMmeIP(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MmeIP) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("mme_ip", "body", "ipv4", m.MmeIP.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ENODEBConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Pci) { // not required
@@ -212,6 +240,24 @@ func (m *ENODEBConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if err := validate.MaximumInt("pci", "body", int64(m.Pci), 503, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *ENODEBConfiguration) validateRadioConfiguration(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RadioConfiguration) { // not required
+		return nil
+	}
+
+	if m.RadioConfiguration != nil {
+		if err := m.RadioConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("radioConfiguration")
+			}
+			return err
+		}
 	}
 
 	return nil

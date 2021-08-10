@@ -49,6 +49,11 @@ SingleEnodebConfig = namedtuple(
         'bandwidth_mhz', 'cell_id',
         'allow_enodeb_transmit',
         'mme_address', 'mme_port',
+        'plmn',
+        'reference_signal_power',
+        'pa',
+        'pb',
+       # 'mme_pool_1',
     ],
 )
 
@@ -87,7 +92,12 @@ def build_desired_config(
     # Attempt to load device configuration from YANG before service mconfig
     enb_config = _get_enb_yang_config(device_config) or \
                  _get_enb_config(mconfig, device_config)
-
+    if enb_config.pa is not None:
+        _set_power_control_pa(cfg_desired,data_model,enb_config.pa)
+    if enb_config.pb is not None:
+        _set_power_control_pb(cfg_desired,enb_config.pb)
+    if enb_config.reference_signal_power is not None:
+       _set_power_control_referencePower(cfg_desired,data_model,enb_config.reference_signal_power)
     _set_earfcn_freq_band_mode(
         device_config, cfg_desired, data_model,
         enb_config.earfcndl,
@@ -187,12 +197,24 @@ def _get_enb_config(
     device_config: EnodebConfiguration,
 ) -> SingleEnodebConfig:
     # For fields that are specified per eNB
+    pa = None
+    pb = None
+    reference_signal_power = None
+    plmn =None
+
     if mconfig.enb_configs_by_serial is not None and \
             len(mconfig.enb_configs_by_serial) > 0:
         enb_serial = \
             device_config.get_parameter(ParameterName.SERIAL_NUMBER)
         if enb_serial in mconfig.enb_configs_by_serial:
             enb_config = mconfig.enb_configs_by_serial[enb_serial]
+            if enb_config.pa is not None and enb_config.pa != 0:
+                pa = enb_config.pa
+            if enb_config.pb is not None and enb_config.pb != 0:
+                pb = enb_config.pb
+            if enb_config.reference_signal_power is not None and enb_config.reference_signal_power != 0:
+                reference_signal_power = enb_config.reference_signal_power
+            print('xxxxxxx'+str(enb_config.pa))
             earfcndl = enb_config.earfcndl
             pci = enb_config.pci
             allow_enodeb_transmit = enb_config.transmit_enabled
@@ -250,6 +272,10 @@ def _get_enb_config(
         allow_enodeb_transmit=allow_enodeb_transmit,
         mme_address=mme_address,
         mme_port=mme_port,
+        pa=pa,
+        pb=pb,
+        reference_signal_power=reference_signal_power,
+        plmn= plmn,
     )
     return single_enodeb_config
 
@@ -481,6 +507,43 @@ def _set_plmnids_tac(
             )
     cfg.set_parameter(ParameterName.TAC, tac)
 
+
+def _set_power_control_pa(
+    cfg: EnodebConfiguration,
+    data_model: DataModel,
+    pa: Any,
+) -> None:
+    """
+    Set the following parameters:
+     - PB
+    """
+    if pa not in range(-10, 12):
+        raise ConfigurationError('Invalid PA (%d)' % pa)
+    _set_param_if_present(cfg, data_model, ParameterName.PA, pa)
+def _set_power_control_pb(
+    cfg: EnodebConfiguration,
+    pb: Any,
+) -> None:
+    """
+    Set the following parameters:
+     - PB
+    """
+    if pb not in range(0, 3):
+        raise ConfigurationError('Invalid PB (%d)' % pb)
+    cfg.set_parameter(ParameterName.PB, pb)
+
+def _set_power_control_referencePower(
+    cfg: EnodebConfiguration,
+    data_model: DataModel,
+    reference_signal_power: Any,
+) -> None:
+    """
+    Set the following parameters:
+     - reference_signal_power
+    """
+    if reference_signal_power not in range(0, 20):
+        raise ConfigurationError('Invalid reference_signal_power (%d)' % reference_signal_power)
+    _set_param_if_present(cfg, data_model, ParameterName.REFERENCE_SIGNAL_POWER, reference_signal_power)
 
 def _set_earfcn_freq_band_mode(
     device_cfg: EnodebConfiguration,

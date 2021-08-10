@@ -39,10 +39,14 @@ type EnodebConfiguration struct {
 	// mme ip
 	// Format: ipv4
 	MmeIP strfmt.IPv4 `json:"mme_ip,omitempty"`
+
 	// pci
 	// Maximum: 503
 	// Minimum: > 0
 	Pci uint32 `json:"pci,omitempty"`
+
+	// radio configuration
+	RadioConfiguration *RadioConfiguration `json:"radioConfiguration,omitempty"`
 
 	// special subframe pattern
 	// Maximum: 9
@@ -77,11 +81,16 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	if err := m.validateDeviceClass(formats); err != nil {
 		res = append(res, err)
 	}
+
 	if err := m.validateMmeIP(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validatePci(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRadioConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -218,6 +227,7 @@ func (m *EnodebConfiguration) validateMmeIP(formats strfmt.Registry) error {
 
 	return nil
 }
+
 func (m *EnodebConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Pci) { // not required
@@ -230,6 +240,24 @@ func (m *EnodebConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if err := validate.MaximumInt("pci", "body", int64(m.Pci), 503, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *EnodebConfiguration) validateRadioConfiguration(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RadioConfiguration) { // not required
+		return nil
+	}
+
+	if m.RadioConfiguration != nil {
+		if err := m.RadioConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("radioConfiguration")
+			}
+			return err
+		}
 	}
 
 	return nil

@@ -35,7 +35,7 @@ IPTABLES_RULE_FMT = """sudo iptables -t nat
     --dport {port}
     -j DNAT --to-destination {private_ip}"""
 
-EXPECTED_IP4 = ('192.168.60.142', '10.0.2.1')
+EXPECTED_IP4 = ('192.168.8.120', '10.0.2.1')
 EXPECTED_MASK = '255.255.255.0'
 
 

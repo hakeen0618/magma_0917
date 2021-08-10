@@ -394,7 +394,15 @@ func getEnodebConfigsBySerial(nwConfig *lte_models.NetworkCellularConfigs, gwCon
 			enbMconfig.BandwidthMhz = int32(cellularEnbConfig.BandwidthMhz)
 			enbMconfig.Tac = int32(cellularEnbConfig.Tac)
 			enbMconfig.CellId = int32(swag.Uint32Value(cellularEnbConfig.CellID))
-			enbMconfig.MmeIp = string(cellularEnbConfig.MmeIP)
+			enbMconfig.MmeIp = string(gwConfig.Epc.IPV4SgwS1uAddr)
+			//radio config for cell.
+			enbMconfig.PlmnId = string(cellularEnbConfig.RadioConfiguration.CellConfiguration.PlmnID)
+			enbMconfig.MmePool_1 = string(cellularEnbConfig.RadioConfiguration.CellConfiguration.MmePool1)
+			enbMconfig.MmePool_2 = string(cellularEnbConfig.RadioConfiguration.CellConfiguration.MmePool2)
+            // radio config power param
+            enbMconfig.ReferenceSignalPower = int32(cellularEnbConfig.RadioConfiguration.PowerControlParameters.ReferenceSignalPower)
+            enbMconfig.Pa = int32(cellularEnbConfig.RadioConfiguration.PowerControlParameters.Pa)
+            enbMconfig.Pb = int32(swag.Int32Value(cellularEnbConfig.RadioConfiguration.PowerControlParameters.Pb))
 			// override zero values with network/gateway configs
 			if enbMconfig.Earfcndl == 0 {
 				enbMconfig.Earfcndl = int32(nwConfig.GetEarfcndl())

@@ -72,6 +72,14 @@ message EnodebD {
         int32 cell_id = 9;
         string ip_address = 10;
         string mme_ip = 11;
+        int32 reference_signal_power = 12;
+        string powerClass = 13;
+        int32 pb = 14;
+        int32 pa = 15;
+        string plmn_id = 16;
+        string mme_pool_1 = 17;
+        string mme_pool_2 = 18;
+
     }
 
     orc8r.LogLevel log_level = 1;

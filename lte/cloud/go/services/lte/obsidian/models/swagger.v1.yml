@@ -2290,6 +2290,48 @@ definitions:
         type: string
         format: ipv4
         example: '10.0.2.1'
+      radioConfiguration:
+        $ref: '#/definitions/radioConfiguration'
+  radioConfiguration:
+    description: Radio Configuration for  eNodeb devices.
+    type: object
+    properties:
+      cellConfiguration:
+        $ref: '#/definitions/cellConfiguration'
+      powerControlParameters:
+        $ref: '#/definitions/powerControlParameters'
+  cellConfiguration:
+    description: cell Configuration for  eNodeb devices.
+    type: object
+    properties:
+      plmn_id:
+        type: string
+        example: '00101'
+      mme_pool_1:
+        type: string
+        example: ''
+      mme_pool_2:
+        type: string
+        example: ''
+
+  powerControlParameters:
+    description: power control param Configuration for  eNodeb devices.
+    type: object
+    properties:
+      reference_signal_power:
+        type: integer
+        format: int32
+        example: 12
+      pb:
+        type: integer
+        format: int32
+        maximum: 3
+        minimum: 0
+        example: 0
+      pa:
+        type: integer
+        format: int32
+        example: -3
 
   unmanaged_enodeb_configuration:
     description: Configuration for externally managed eNodeb devices.

@@ -138,6 +138,19 @@ class BaicellsRTSTrDataModel(DataModel):
         ParameterName.PTP_STATUS: TrParam(DEVICE_PATH + 'DeviceInfo.X_BAICELLS_COM_1588_Status', True, TrParameterType.BOOLEAN, False),
         ParameterName.MME_STATUS: TrParam(DEVICE_PATH + 'DeviceInfo.X_BAICELLS_COM_MME_Status', True, TrParameterType.BOOLEAN, False),
         ParameterName.REM_STATUS: TrParam(FAPSERVICE_PATH + 'REM.X_BAICELLS_COM_REM_Status', True, TrParameterType.BOOLEAN, False),
+        ParameterName.RF_STATE:
+            TrParam(FAPSERVICE_PATH +'CellConfig.LTE.RAN.RF.X_BAICELLS_COM_RadioEnable', True, TrParameterType.STRING, False),
+        ParameterName.SYNC_1588_STATUS:
+            TrParam('Device.DeviceInfo.X_BAICELLS_COM_1588_Status', True, TrParameterType.STRING, False),
+        ParameterName.LATITUDE:
+            TrParam('Device.DeviceInfo.X_BAICELLS_COM_Latitude', True, TrParameterType.INT, False),
+        ParameterName.LONGITUDE:
+            TrParam('Device.DeviceInfo.X_BAICELLS_COM_Longitude', True,TrParameterType.INT, False),
+        ParameterName.ALTITUDE:
+            TrParam('Device.DeviceInfo.X_BAICELLS_COM_Height', True, TrParameterType.INT, False),
+        ParameterName.UPTIME:
+            TrParam('Device.DeviceInfo.X_BAICELLS_COM_STATION_RUN_Time', True ,TrParameterType.INT, False),
+
         ParameterName.LOCAL_GATEWAY_ENABLE:
             TrParam(DEVICE_PATH + 'DeviceInfo.X_BAICELLS_COM_LTE_LGW_Switch', False, TrParameterType.BOOLEAN, False),
         # Tested Baicells devices were missing this parameter
@@ -169,6 +182,12 @@ class BaicellsRTSTrDataModel(DataModel):
             + 'CellConfig.LTE.RAN.PHY.TDDFrame.SpecialSubframePatterns', True, TrParameterType.INT, False,
         ),
         ParameterName.CELL_ID: TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Common.CellIdentity', True, TrParameterType.UNSIGNED_INT, False),
+        ParameterName.VENDOR:
+            TrParam('Device.DeviceInfo.ManufacturerOUI', True, TrParameterType.STRING, False),
+        ParameterName.MODEL_NAME:
+            TrParam('Device.DeviceInfo.ModelName', True, TrParameterType.STRING, False),
+        ParameterName.IP_ADDRESS:
+            TrParam('Device.DeviceInfo.X_BAICELLS_COM_IpAddr', True, TrParameterType.STRING, False),
 
         # Other LTE parameters
         ParameterName.ADMIN_STATE: TrParam(FAPSERVICE_PATH + 'FAPControl.LTE.AdminState', False, TrParameterType.BOOLEAN, False),
@@ -203,6 +222,10 @@ class BaicellsRTSTrDataModel(DataModel):
             FAPSERVICE_PATH
             + 'FAPControl.LTE.Gateway.X_BAICELLS_COM_MmePool.Enable', True, TrParameterType.BOOLEAN, False,
         ),
+        ParameterName.MME_POOL_1:
+            TrParam(FAPSERVICE_PATH +'FAPControl.LTE.Gateway.X_BAICELLS_COM_MmePool.MmePool1List', True, TrParameterType.STRING,False),
+        ParameterName.MME_POOL_2:
+            TrParam(FAPSERVICE_PATH +'FAPControl.LTE.Gateway.X_BAICELLS_COM_MmePool.MmePool2List', True, TrParameterType.STRING,False),
 
         # Management server parameters
         ParameterName.PERIODIC_INFORM_ENABLE:
@@ -220,6 +243,115 @@ class BaicellsRTSTrDataModel(DataModel):
         ParameterName.PERF_MGMT_UPLOAD_URL: TrParam(
             DEVICE_PATH + 'FAP.PerfMgmt.Config.1.URL', False, TrParameterType.STRING, False,
         ),
+
+        #Power control parameters
+        ParameterName.REFERENCE_SIGNAL_POWER:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.RF.ReferenceSignalPower',False,TrParameterType.INT, False,),
+        #ParameterName.POWER_CLASS: TrParam(FAPSERVICE_PATH, 'CellConfig.LTE.RAN.RF.X_BAICELLS_MaxTxPowerExpanded',
+                                                      #True, TrParameterType.INT, False),
+        ParameterName.PA: TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.PHY.PDSCH.Pa', False, TrParameterType.INT, False),
+        ParameterName.PB: TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.PHY.PDSCH.Pb', True, TrParameterType.INT, False),
+
+        #IP Configuration
+        #ParameterName.IP_ACCESS_MODE:
+            #TrParam()
+        ParameterName.TIME_ZONE:
+            TrParam('Device.Time.LocalTimeZoneName', True, TrParameterType.INT, False),
+        #ParameterName.DNS_ADDRESS_1:
+        #    TrParam('', True, TrParameterType.STRING, False),
+        ParameterName.MTU:
+            TrParam('Device.network.config.wan1.mtu', True, TrParameterType.INT, False),
+
+        #HO algorithm
+        ParameterName.A1_THRESHOLD_RSRP:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.ConnMode.EUTRA.A1ThresholdRSRP', True,TrParameterType.UNSIGNED_INT, False),
+        #ParameterName.LTE_A1_THRESHOLD_RSRQ:
+        #ParameterName.A1_HYSTERESIS:
+        #ParameterName.A1_TIME_TO_TRIGGER:
+        ParameterName.A2_THRESHOLD_RSRP:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.ConnMode.EUTRA.A2ThresholdRSRP', True, TrParameterType.UNSIGNED_INT, False),
+        #ParameterName.LTE_A2_THRESHOLD_RSRP_IRAT_DATA:
+        #ParameterName.LTE_A2_THRESHOLD_RSRQ:
+        #ParameterName.LTE_A2_THRESHOLD_RSRP_IRAT_VOLTE:
+        #ParameterName.LTE_A2_THRESHOLD_RSRQ_IRAT_VOLTE:
+        #ParameterName.LTE_A2_THRESHOLD_RSRQ_IRAT_DATA:
+        #ParameterName.LTE_A2_THRESHOLD_RSRQ_BLIND_DIR:
+        #ParameterName.LTE_A2_THRESHOLD_RSRP_BLIND_DIR:
+        #ParameterName.A2_HYSTERESIS:
+        #ParameterName.A2_TIME_TO_TRIGGER:
+
+        #A3
+        ParameterName.A3_OFFSET:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.COM.LTE.HOVA3Offset', True, TrParameterType.INT, False),
+        ParameterName.A3_OFFSET_ANR:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.COM.LTE.ANR.AnrA3Offset', True, TrParameterType.INT, False),
+        #A4
+        ParameterName.A4_THRESHOLD_RSRP:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.LTE.RAN.Mobility.ConnMode.EUTRA.A4ThresholdRSRP', True, TrParameterType.UNSIGNED_INT, False),
+        #A5
+        ParameterName.LTE_INTRA_A5_THRESHOLD_1_RSRP:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.COM.LTE.HOVInterA5Threshold1RSRP', True, TrParameterType.UNSIGNED_INT, False),
+        ParameterName.LTE_INTRA_A5_THRESHOLD_2_RSRP:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.COM.LTE.HOVInterA5Threshold2RSRP', True, TrParameterType.UNSIGNED_INT, False),
+
+        #B2
+        ParameterName.B2_THRESHOLD1_RSRP:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.COM.LTE.IRAT.B2threshold1RsrpHO', True, TrParameterType.INT, False),
+        ParameterName.B2_THRESHOLD2_RSRP:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.ConnMode.IRAT.X_BAICELLS_COM_UTRANTDD.B2Threshold2UTRATDDRSCP', True, TrParameterType.INT, False),
+        ParameterName.B2_GERAN_IRAT_THRESHOLD:
+            TrParam(FAPSERVICE_PATH + 'X_BAICELLS.COM.LTE.IRAT.B2Threshold2Geran', True, TrParameterType.UNSIGNED_INT, False),
+        #Cell selection
+        ParameterName.CELL_SELECTION_PARAMETERS_QRXLEVMIN:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.QRxLevMinSIB1', True, TrParameterType.INT, False),
+        ParameterName.CELL_SELECTION_PARAMETERS_QRXLEVMINOFFSET:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.QRxLevMinOffset', True, TrParameterType.INT, False),
+        #Reselection
+        ParameterName.CELL_RESELECTION_PARAMETERS_S_INTRASEARCH:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.SIntraSearch', True, TrParameterType.INT, False),
+        ParameterName.CELL_RESELECTION_PARAMETERS_S_NONINTRASEARCH:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.SNonIntraSearch', True, TrParameterType.INT, False),
+        ParameterName.CELL_RESELECTION_PARAMETERS_QRXLEVMIN:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.QRxLevMinSIB3', True, TrParameterType.INT, False),
+        ParameterName.CELL_RESELECTION_PARAMETERS_RESELECTION_PRIORITY:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.CellReselectionPriority', True, TrParameterType.UNSIGNED_INT, False),
+        ParameterName.CELL_RESELECTION_PARAMETERS_THRESHSERVINGLOW:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.IntraFreq.ThreshServingLow', True, TrParameterType.UNSIGNED_INT, False),
+
+        #X2
+        ParameterName.X2_ENABLE:
+            TrParam(FAPSERVICE_PATH + 'X_COM.LTE.EnableX2',True , TrParameterType.BOOLEAN,False),
+
+        #LTE Security
+        ParameterName.CIPHERING_ALGORITHM:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.EPC.AllowedCipheringAlgorithmList', True, TrParameterType.STRING, False),
+        ParameterName.INTEGRITY_ALGORITHM:
+            TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.EPC.AllowedIntegrityProtectionAlgorithmList', True, TrParameterType.STRING, False),
+
+        #Management server
+        ParameterName.MANAGEMENT_SERVER:
+            TrParam('Device.ManagementServer.URL', True, TrParameterType.STRING, False),
+        ParameterName.MANAGEMENT_SERVER_PORT:
+            TrParam('Device.ManagementServer.tr069_port', True, TrParameterType.INT, False),
+        ParameterName.MANAGEMENT_SERVER_SSL_ENABLE:
+            TrParam('Device.ManagementServer.ssl_enable', True, TrParameterType.BOOLEAN, False),
+
+        #SYNC
+        ParameterName.SYNC_1588_DOMAIN:
+            TrParam('Device.DeviceInfo.X_COM_1588Domain_Num', True, TrParameterType.STRING, False),
+        ParameterName.SYNC_1588_SYNC_MESSAGE:
+            TrParam('Device.DeviceInfo.X_COM_1588Sync_Message_Interval', True, TrParameterType.INT, False),
+        ParameterName.SYNC_1588_DELAY_REQUEST:
+            TrParam('Device.DeviceInfo.X_COM_1588Delay_Request_Message_Interval', True, TrParameterType.INT, False),
+        ParameterName.SYNC_1588_HOLDOVER:
+            TrParam('Device.DeviceInfo.X_COM_1588Holdover', True, TrParameterType.INT, False),
+        ParameterName.SYNC_1588_ASYMMETRY:
+            TrParam('Device.DeviceInfo.X_COM_1588Asymmetry_Value', True, TrParameterType.INT, False),
+        ParameterName.SYNC_1588_UNICAST_ENABLE:
+            TrParam('Device.DeviceInfo.X_COM_1588Unicast_Switch', True, TrParameterType.BOOLEAN, False),
+        ParameterName.SYNC_1588_UNICAST_SERVERIP:
+            TrParam('Device.DeviceInfo.X_COM_1588Unicast_IpAddr', True, TrParameterType.STRING, False),
+
 
     }
 
