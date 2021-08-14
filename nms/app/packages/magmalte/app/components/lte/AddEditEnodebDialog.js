@@ -14,8 +14,6 @@
  * @format
  */
 
-import type {enodeb, enodeb_configuration} from '@fbcnms/magma-api';
-
 import Button from '@fbcnms/ui/components/design-system/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -28,6 +26,7 @@ import MagmaV1API from '@fbcnms/magma-api/client/WebClient';
 import React, {useState} from 'react';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
+import type {enodeb, enodeb_configuration} from '@fbcnms/magma-api';
 
 import nullthrows from '@fbcnms/util/nullthrows';
 import {EnodebBandwidthOption, EnodebDeviceClass} from './EnodebUtils';
@@ -144,9 +143,31 @@ export default function AddEditEnodebDialog(props: Props) {
         bandwidth_mhz: bandwidthMhz,
         cell_id: cellId,
         transmit_enabled: transmitEnabled,
+        //   radioConfiguration: {
+        //     powerControlParameters: {
+        //       reference_signal_power: null,
+        //       power_class: null,
+        //       pb: null,
+        //       pa: null,
+        //     },
+        //   },
+        //   sync_1588: {
+        //     sync_1588_switch: null,
+        //     sync_1588_asymmetry: null,
+        //     sync_1588_delay_rq_msg_interval: null,
+        //     sync_1588_domain: null,
+        //     sync_1588_holdover: null,
+        //     sync_1588_msg_interval: null,
+        //     sync_1588_unicast_enable: null,
+        //     sync_1588_unicast_serverIp: null,
+        //   },
+        //   managementServer: {
+        //     management_server_host: null,
+        //     management_server_port: null,
+        //     management_server_ssl_enable: null,
+        //   },
       },
     };
-
     if (earfcndl !== '') {
       enb.config.earfcndl = parseInt(earfcndl);
     }
@@ -284,6 +305,7 @@ export default function AddEditEnodebDialog(props: Props) {
           onChange={({target}) => setCellNumber(target.value)}
           error={!isCellNumberValid}
         />
+
         <FormControl className={classes.input}>
           <FormControlLabel
             control={

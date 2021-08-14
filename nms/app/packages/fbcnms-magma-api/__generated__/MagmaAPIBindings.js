@@ -354,9 +354,14 @@ export type enodeb_configuration = {
     cell_id: number,
     device_class: "Baicells Nova-233 G2 OD FDD" | "Baicells Nova-243 OD TDD" | "Baicells Neutrino 224 ID FDD" | "Baicells ID TDD/FDD" | "NuRAN Cavium OC-LTE",
     earfcndl ? : number,
+    managementServer ? : managementServer,
+    mme_pool_1 ? : string,
+    mme_pool_2 ? : string,
     pci ? : number,
+    radioConfiguration ? : radioConfiguration,
     special_subframe_pattern ? : number,
     subframe_assignment ? : number,
+    sync_1588 ? : sync_1588,
     tac ? : number,
     transmit_enabled: boolean,
 };
@@ -793,6 +798,11 @@ export type magmad_gateway_configs = {
     logging ? : gateway_logging_configs,
     vpn ? : gateway_vpn_configs,
 };
+export type managementServer = {
+    management_server_host ? : string,
+    management_server_port ? : number,
+    management_server_ssl_enable ? : boolean,
+};
 export type matcher = {
     isRegex: boolean,
     name: string,
@@ -1195,6 +1205,12 @@ export type policy_rule_config = {
     service_identifier ? : number,
     tracking_type ? : "ONLY_OCS" | "ONLY_PCRF" | "OCS_AND_PCRF" | "NO_TRACKING",
 };
+export type powerControlParameters = {
+    pa ? : number,
+    pb ? : number,
+    power_class ? : number,
+    reference_signal_power ? : number,
+};
 export type prom_alert_config = {
     alert: string,
     annotations ? : prom_alert_labels,
@@ -1270,6 +1286,9 @@ export type qos_profile = {
     preemption_capability ? : boolean,
     preemption_vulnerability ? : boolean,
     priority_level ? : number,
+};
+export type radioConfiguration = {
+    powerControlParameters ? : powerControlParameters,
 };
 export type radius_config = {
     DAE_addr ? : string,
@@ -1435,6 +1454,16 @@ export type swx = {
     servers ? : Array < diameter_client_configs >
         ,
     verify_authorization ? : boolean,
+};
+export type sync_1588 = {
+    sync_1588_asymmetry ? : number,
+    sync_1588_delay_rq_msg_interval ? : number,
+    sync_1588_domain ? : number,
+    sync_1588_holdover ? : number,
+    sync_1588_msg_interval ? : number,
+    sync_1588_switch ? : boolean,
+    sync_1588_unicast_enable ? : boolean,
+    sync_1588_unicast_serverIp ? : string,
 };
 export type system_status = {
     cpu_idle ? : number,

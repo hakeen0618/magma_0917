@@ -61,6 +61,8 @@ class ParameterName():
     NUM_PLMNS = 'Num PLMNs'
     PLMN = 'PLMN'
     PLMN_LIST = 'PLMN List'
+    MME_POOL_1 = 'MME Pool 1'
+    MME_POOL_2 = 'MME Pool 2'
 
     # PLMN parameters
     PLMN_N = 'PLMN %d'
@@ -85,6 +87,33 @@ class ParameterName():
     PERF_MGMT_USER = 'Perf mgmt username'
     PERF_MGMT_PASSWORD = 'Perf mgmt password'
 
+    # Power control parameters
+    REFERENCE_SIGNAL_POWER = 'Reference Signal Power'
+    POWER_CLASS = 'power class'
+    PA = 'PA'
+    PB = 'PB'
+
+    #DNS
+    HOST_NAME = 'Host Name'
+    TIME_ZONE = 'TimeZone'
+    DNS_ADDRESS_1 = 'DNS Address 1'
+    DNS_ADDRESS_2 = 'DNS Address 2'
+    DNS_ADDRESS_3 = 'DNS Address 3'
+
+    # management server
+    MANAGEMENT_SERVER = 'Management Server'
+    MANAGEMENT_SERVER_PORT = 'Management Server Port'
+    MANAGEMENT_SERVER_SSL_ENABLE = 'Management Server SSL Enable'
+
+    #Sync
+    SYNC_1588_SWITCH = '1588 sync switch'
+    SYNC_1588_DOMAIN = '1588 domain'
+    SYNC_1588_SYNC_MSG_INTREVAL = '1588 sync message interval'
+    SYNC_1588_DELAY_REQUEST_MSG_INTERVAL = '1588 delay request msg interval'
+    SYNC_1588_HOLDOVER = '1588 holdover'
+    SYNC_1588_ASYMMETRY = '1588 asymmetry'
+    SYNC_1588_UNICAST_ENABLE = '1588 unicast enable'
+    SYNC_1588_UNICAST_SERVERIP = '1588 unicast server IP'
 
 class TrParameterType():
     BOOLEAN = 'boolean'
