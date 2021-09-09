@@ -354,7 +354,6 @@ class BaicellsQafbGetObjectParametersState(EnodebAcsState):
     def state_description(self) -> str:
         return 'Getting object parameters'
 
-
 class BaicellsQAFBTrDataModel(DataModel):
     """
     Class to represent relevant data model parameters from TR-196/TR-098.

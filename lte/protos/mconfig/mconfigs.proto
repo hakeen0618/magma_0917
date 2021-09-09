@@ -71,24 +71,33 @@ message EnodebD {
         int32 tac = 8;
         int32 cell_id = 9;
         string ip_address = 10;
-        RadioConfiguration radioConfig = 11;
+        map <string, neighbor_freq_table> neighbor_freq_list = 47;
+        map <string, neighbor_cell_table> neighbor_cell_list = 59;
+        message neighbor_freq_table {
+          uint32 index = 1;
+          uint32 earfcn = 2;
+          int32 q_offset_range = 3;
+          int32 q_rx_lev_min_sib5 = 4;
+          int32 p_max = 5;
+          uint32 t_reselection_eutra = 6;
+          uint32 t_reselection_eutra_sf_medium = 7;
+          uint32 resel_thresh_high = 8;
+          uint32 resel_thresh_low = 9;
+          uint32 reselection_priority = 10;
+          bool enable = 11;
+        }
+        message neighbor_cell_table {
+          uint32 index = 1;
+          string plmn = 2;
+          uint32 cell_id = 3;
+          uint32 earfcn = 4;
+          uint32 pci = 5;
+          uint32 tac = 6;
+          int32 q_offset = 7;
+          int32 cio = 8;
+          bool enable = 9;
+        }
 
-        message RadioConfiguration{
-          PowerControlParameters power_control_param = 1;
-          CellConfiguration cell_config = 2;
-        }
-        message PowerControlParameters{
-          int32 reference_signal_power = 11;
-          string powerClass = 12;
-          int32 pb = 13;
-          int32 pa = 14;
-        }
-        message CellConfiguration{
-          string plmn_id = 8;
-          string mme_pool_1 = 9;
-          string mme_pool_2 = 10;
-          string mme_ip = 11;
-        }
     }
 
     orc8r.LogLevel log_level = 1;

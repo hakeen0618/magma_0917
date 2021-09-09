@@ -149,6 +149,9 @@ def get_all_objects_to_add(
     """
     desired = desired_cfg.get_object_names()
     current = device_cfg.get_object_names()
+    #current = []
+    logger.debug('2222222222222222222222222')
+    logger.debug(list(set(desired).difference(set(current))))
     return list(set(desired).difference(set(current)))
 
 
@@ -162,6 +165,11 @@ def get_all_objects_to_delete(
     """
     desired = desired_cfg.get_object_names()
     current = device_cfg.get_object_names()
+    #current = []
+    logger.debug('111111111111111111111111111111111111')
+    logger.debug(list(set(desired).difference(set(current))))
+    logger.debug(current)
+    logger.debug(desired)
     return list(set(current).difference(set(desired)))
 
 
@@ -196,6 +204,30 @@ def get_object_params_to_get(
         int(device_cfg.get_parameter(ParameterName.NUM_PLMNS))
     for i in range(1, num_plmns + 1):
         obj_name = ParameterName.PLMN_N % i
+        if not device_cfg.has_object(obj_name):
+            device_cfg.add_object(obj_name)
+        obj_to_params = data_model.get_numbered_param_names()
+        desired = obj_to_params[obj_name]
+        current = []
+        if desired_cfg is not None:
+            current = desired_cfg.get_parameter_names_for_object(obj_name)
+        names_to_add = list(set(desired) - set(current))
+        names = names + names_to_add
+    num_neighbor_freq = int(device_cfg.get_parameter(ParameterName.NUM_LTE_NEIGHBOR_FREQ))
+    for i in range(1, num_neighbor_freq + 1):
+        obj_name = ParameterName.NEGIH_FREQ_LIST % i
+        if not device_cfg.has_object(obj_name):
+            device_cfg.add_object(obj_name)
+        obj_to_params = data_model.get_numbered_param_names()
+        desired = obj_to_params[obj_name]
+        current = []
+        if desired_cfg is not None:
+            current = desired_cfg.get_parameter_names_for_object(obj_name)
+        names_to_add = list(set(desired) - set(current))
+        names = names + names_to_add
+    num_neighbor_cell = int(device_cfg.get_parameter(ParameterName.NUM_LTE_NEIGHBOR_CELL))
+    for i in range(1, num_neighbor_cell + 1):
+        obj_name = ParameterName.NEIGHBOR_CELL_LIST_N % i
         if not device_cfg.has_object(obj_name):
             device_cfg.add_object(obj_name)
         obj_to_params = data_model.get_numbered_param_names()
@@ -266,6 +298,10 @@ def get_obj_param_values_to_set(
             old = device_cfg.get_parameter_for_object(name, obj_name)
             _type = data_model.get_parameter(name).type
             if not are_tr069_params_equal(new, old, _type):
+                logger.debug('get object to set  not equl ================')
+                logger.debug(new)
+                logger.debug(old)
+                logger.debug(name)
                 param_values[obj_name][name] = new
     return param_values
 
@@ -288,6 +324,7 @@ def get_all_param_values_to_set(
     for _obj_name, param_map in obj_param_values.items():
         for name, val in param_map.items():
             param_values[name] = val
+
     return param_values
 
 

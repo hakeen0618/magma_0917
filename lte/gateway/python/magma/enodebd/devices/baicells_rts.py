@@ -82,8 +82,8 @@ class BaicellsRTSHandler(BasicEnodebAcsStateMachine):
             'check_wait_get_params': WaitGetParametersState(self, when_done='end_session'),
             'end_session': EndSessionState(self),
             'reboot': BaicellsSendRebootState(self, when_done='wait_reboot'),
-            'wait_reboot': WaitRebootResponseState(self, when_done='wait_post_reboot_inform'),
-            'wait_post_reboot_inform': WaitInformMRebootState(self, when_done='wait_empty_post_reboot', when_timeout='wait_inform_post_reboot'),
+            'wait_reboot': WaitRebootResponseState(self, when_done='wait_inform_post_reboot'),
+            #'wait_post_reboot_inform': WaitInformMRebootState(self, when_done='wait_empty_post_reboot', when_timeout='wait_inform_post_reboot'),
             'wait_inform_post_reboot': WaitInformState(self, when_done='wait_empty_post_reboot', when_boot=None),
             'wait_empty_post_reboot': WaitEmptyMessageState(self, when_done='get_transient_params', when_missing='check_optional_params'),
             # The states below are entered when an unexpected message type is
@@ -128,6 +128,7 @@ class BaicellsRTSTrDataModel(DataModel):
     # Mapping of TR parameter paths to aliases
     DEVICE_PATH = 'Device.'
     FAPSERVICE_PATH = DEVICE_PATH + 'Services.FAPService.1.'
+    FAPSERVICE_PATH2 = DEVICE_PATH + 'Services.FAPService.2.'
     PARAMETERS = {
         # Top-level objects
         ParameterName.DEVICE: TrParam(DEVICE_PATH, True, TrParameterType.OBJECT, False),
@@ -193,6 +194,12 @@ class BaicellsRTSTrDataModel(DataModel):
         ParameterName.NUM_PLMNS: TrParam(
             FAPSERVICE_PATH + 'CellConfig.LTE.EPC.PLMNListNumberOfEntries', True, TrParameterType.INT, False,
         ),
+        ParameterName.NUM_LTE_NEIGHBOR_FREQ: TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.CarrierNumberOfEntries', True, TrParameterType.INT, False,
+        ),
+        ParameterName.NUM_LTE_NEIGHBOR_CELL: TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECellNumberOfEntries', True, TrParameterType.INT, False,
+        ),
         ParameterName.PLMN: TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.EPC.PLMNList.', True, TrParameterType.STRING, False),
         # PLMN arrays are added below
         ParameterName.TAC: TrParam(FAPSERVICE_PATH + 'CellConfig.LTE.EPC.TAC', True, TrParameterType.INT, False),
@@ -241,6 +248,82 @@ class BaicellsRTSTrDataModel(DataModel):
         PARAMETERS[ParameterName.PLMN_N_PLMNID % i] = TrParam(
             FAPSERVICE_PATH + 'CellConfig.LTE.EPC.PLMNList.%d.PLMNID' % i, True, TrParameterType.STRING, False,
         )
+    NUM_NEIGHBOR_CELL_CONFIG = 16
+    for i in range(1, NUM_NEIGHBOR_CELL_CONFIG + 1):
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_LIST_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.' % i , True, TrParameterType.INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_CELL_ID_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.CID' % i, True, TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_PLMN_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.PLMNID' % i, True, TrParameterType.STRING, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_EARFCN_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.EUTRACarrierARFCN' % i, True, TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_PCI_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.PhyCellID' % i, True, TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_TAC_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.X_BAICELLS_COM_TAC' % i, True, TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_QOFFSET_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.QOffset' % i, True, TrParameterType.INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_CIO_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.CIO' % i, True, TrParameterType.INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_CELL_ENABLE_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.NeighborList.LTECell.%d.Enable' % i, True, TrParameterType.BOOLEAN, False,
+        )
+
+
+    NUM_NEIGHBOR_FREQ_CONFIG = 8
+    for i in range(1, NUM_NEIGHBOR_FREQ_CONFIG + 1):
+        PARAMETERS[(ParameterName.NEGIH_FREQ_LIST) % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.' % i, True, TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_EARFCN_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.EUTRACarrierARFCN' % i, True,
+            TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_QRXLEVMINSIB5_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.QRxLevMinSIB5' % i, True,
+            TrParameterType.INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_Q_OFFSETRANGE_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.QOffsetFreq' % i, True,
+            TrParameterType.INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_TRESELECTIONEUTRA_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.TReselectionEUTRA' % i, True,
+            TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_RESELECTIONPRIORITY_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.CellReselectionPriority' % i, True,
+            TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_RESELTHRESHHIGH_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.ThreshXHigh' % i, True,
+            TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_RESELTHRESHLOW_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.ThreshXLow' % i, True,
+            TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_PMAX_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.PMax' % i, True,
+            TrParameterType.INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_TRESELECTIONEUTRASFMEDIUM_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.TReselectionEUTRASFMedium' % i, True,
+            TrParameterType.UNSIGNED_INT, False,
+        )
+        PARAMETERS[ParameterName.NEIGHBOR_FREQ_ENABLE_N % i] = TrParam(
+            FAPSERVICE_PATH + 'CellConfig.LTE.RAN.Mobility.IdleMode.InterFreq.Carrier.%d.Enable' % i, True, TrParameterType.BOOLEAN, False,
+
+        )
 
     TRANSFORMS_FOR_ENB = {
         ParameterName.DL_BANDWIDTH: transform_for_enb.bandwidth,
@@ -275,7 +358,12 @@ class BaicellsRTSTrDataModel(DataModel):
     @classmethod
     def get_num_plmns(cls) -> int:
         return cls.NUM_PLMNS_IN_CONFIG
-
+    @classmethod
+    def get_num_neighbor_freq(cls) -> int:
+        return cls.NUM_NEIGHBOR_FREQ_CONFIG
+    @classmethod
+    def get_num_neighbor_cell(cls) -> int:
+        return cls.NUM_NEIGHBOR_CELL_CONFIG
     @classmethod
     def get_parameter_names(cls) -> List[ParameterName]:
         excluded_params = [
@@ -284,11 +372,12 @@ class BaicellsRTSTrDataModel(DataModel):
         ]
         names = list(
             filter(
-                lambda x: (not str(x).startswith('PLMN'))
+                lambda x: (not str(x).startswith('PLMN')) and (not str(x).startswith('neighbor'))
                           and (str(x) not in excluded_params),
                 cls.PARAMETERS.keys(),
             ),
         )
+
         return names
 
     @classmethod
@@ -301,6 +390,30 @@ class BaicellsRTSTrDataModel(DataModel):
             params.append(ParameterName.PLMN_N_PRIMARY % i)
             params.append(ParameterName.PLMN_N_PLMNID % i)
             names[ParameterName.PLMN_N % i] = params
+        for i in range(1, cls.NUM_NEIGHBOR_FREQ_CONFIG + 1):
+            params = []
+            params.append(ParameterName.NEIGHBOR_FREQ_ENABLE_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_EARFCN_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_PMAX_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_Q_OFFSETRANGE_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_RESELTHRESHLOW_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_RESELTHRESHHIGH_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_RESELECTIONPRIORITY_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_TRESELECTIONEUTRASFMEDIUM_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_QRXLEVMINSIB5_N % i)
+            params.append(ParameterName.NEIGHBOR_FREQ_TRESELECTIONEUTRA_N % i)
+            names[ParameterName.NEGIH_FREQ_LIST % i] = params
+        for i in range(1, cls.NUM_NEIGHBOR_CELL_CONFIG + 1):
+            params = []
+            params.append(ParameterName.NEIGHBOR_CELL_ENABLE_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_PLMN_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_CELL_ID_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_EARFCN_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_PCI_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_TAC_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_QOFFSET_N % i)
+            params.append(ParameterName.NEIGHBOR_CELL_CIO_N % i)
+            names[ParameterName.NEIGHBOR_CELL_LIST_N % i] = params
         return names
 
 

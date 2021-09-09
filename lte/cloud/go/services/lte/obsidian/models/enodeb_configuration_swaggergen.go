@@ -7,6 +7,7 @@ package models
 
 import (
 	"encoding/json"
+	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -18,6 +19,12 @@ import (
 // EnodebConfiguration Configuration for an enodeB. Unfilled fields will be inherited from LTE network and gateway configuration.
 // swagger:model enodeb_configuration
 type EnodebConfiguration struct {
+
+	// neighbor cell list
+	NeighborCellList []*NeighborCell `json:"NeighborCellList"`
+
+	// neighbor freq list
+	NeighborFreqList []*NeighborFreq `json:"NeighborFreqList"`
 
 	// bandwidth mhz
 	// Enum: [3 5 10 15 20]
@@ -41,9 +48,6 @@ type EnodebConfiguration struct {
 	// Minimum: > 0
 	Pci uint32 `json:"pci,omitempty"`
 
-	// radio configuration
-	RadioConfiguration *RadioConfiguration `json:"radioConfiguration,omitempty"`
-
 	// special subframe pattern
 	// Maximum: 9
 	SpecialSubframePattern uint32 `json:"special_subframe_pattern,omitempty"`
@@ -66,6 +70,14 @@ type EnodebConfiguration struct {
 func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateNeighborCellList(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateNeighborFreqList(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateBandwidthMhz(formats); err != nil {
 		res = append(res, err)
 	}
@@ -79,10 +91,6 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePci(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRadioConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -105,6 +113,56 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *EnodebConfiguration) validateNeighborCellList(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NeighborCellList) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.NeighborCellList); i++ {
+		if swag.IsZero(m.NeighborCellList[i]) { // not required
+			continue
+		}
+
+		if m.NeighborCellList[i] != nil {
+			if err := m.NeighborCellList[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("NeighborCellList" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *EnodebConfiguration) validateNeighborFreqList(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NeighborFreqList) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.NeighborFreqList); i++ {
+		if swag.IsZero(m.NeighborFreqList[i]) { // not required
+			continue
+		}
+
+		if m.NeighborFreqList[i] != nil {
+			if err := m.NeighborFreqList[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("NeighborFreqList" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -219,24 +277,6 @@ func (m *EnodebConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if err := validate.MaximumInt("pci", "body", int64(m.Pci), 503, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (m *EnodebConfiguration) validateRadioConfiguration(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.RadioConfiguration) { // not required
-		return nil
-	}
-
-	if m.RadioConfiguration != nil {
-		if err := m.RadioConfiguration.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("radioConfiguration")
-			}
-			return err
-		}
 	}
 
 	return nil

@@ -17,6 +17,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strconv"
 
 	feg "magma/feg/cloud/go/feg"
 	feg_serdes "magma/feg/cloud/go/serdes"
@@ -396,14 +397,52 @@ func getEnodebConfigsBySerial(nwConfig *lte_models.NetworkCellularConfigs, gwCon
 			enbMconfig.BandwidthMhz = int32(cellularEnbConfig.BandwidthMhz)
 			enbMconfig.Tac = int32(cellularEnbConfig.Tac)
 			enbMconfig.CellId = int32(swag.Uint32Value(cellularEnbConfig.CellID))
-			//radio config for cell
-            enbMconfig.RadioConfig.CellConfig.PlmnId = cellularEnbConfig.RadioConfiguration.CellConfiguration.PlmnID
-            enbMconfig.RadioConfig.CellConfig.MmePool_1 = cellularEnbConfig.RadioConfiguration.CellConfiguration.MmePool1
-            enbMconfig.RadioConfig.CellConfig.MmePool_2 = cellularEnbConfig.RadioConfiguration.CellConfiguration.MmePool2
-            // radio config power param
-            enbMconfig.RadioConfig.PowerControlParam.ReferenceSignalPower = cellularEnbConfig.RadioConfiguration.PowerControlParameters.ReferenceSignalPower
-            enbMconfig.RadioConfig.PowerControlParam.Pa = cellularEnbConfig.RadioConfiguration.PowerControlParameters.Pa
-            enbMconfig.RadioConfig.PowerControlParam.Pb = swag.Int32Value(cellularEnbConfig.RadioConfiguration.PowerControlParameters.Pb)
+
+			neighborCell := cellularEnbConfig.NeighborCellList
+			if neighborCell != nil {
+				neighbor_cell_map := make(map[string]*lte_mconfig.EnodebD_EnodebConfigNeighborCellTable, len(neighborCell))
+				for _, neighbor := range neighborCell {
+					enbNeighborCell := &lte_mconfig.EnodebD_EnodebConfigNeighborCellTable{}
+					enbNeighborCell.Index = neighbor.Index
+					enbNeighborCell.CellId = neighbor.CellID
+					enbNeighborCell.Earfcn = neighbor.Earfcn
+					enbNeighborCell.Pci = neighbor.Pci
+					enbNeighborCell.Tac = neighbor.Tac
+					enbNeighborCell.QOffset = neighbor.QOffset
+					enbNeighborCell.Cio = neighbor.Cio
+					enbNeighborCell.Enable = neighbor.Enable
+					enbNeighborCell.Plmn = neighbor.Plmn
+
+					index := strconv.Itoa(int(neighbor.Index))
+					neighbor_cell_map[index] = enbNeighborCell
+				}
+				enbMconfig.NeighborCellList = neighbor_cell_map
+			}
+
+			neighborFreqList := cellularEnbConfig.NeighborFreqList
+			if neighborFreqList != nil {
+				neighbor_freq_map := make(map[string]*lte_mconfig.EnodebD_EnodebConfigNeighborFreqTable, len(neighborFreqList))
+				for _, neighbor := range neighborFreqList {
+					fmt.Println(neighbor)
+					enbNeighborFreq := &lte_mconfig.EnodebD_EnodebConfigNeighborFreqTable{}
+					enbNeighborFreq.Index = neighbor.Index
+					enbNeighborFreq.Enable = neighbor.Enable
+					enbNeighborFreq.Earfcn = neighbor.Earfcn
+					enbNeighborFreq.QOffsetRange = neighbor.QOffsetRange
+					enbNeighborFreq.QRxLevMinSib5 = neighbor.QRxLevMinSib5
+					enbNeighborFreq.PMax = neighbor.PMax
+					enbNeighborFreq.TReselectionEutra = neighbor.TReselectionEutra
+					enbNeighborFreq.TReselectionEutraSfMedium = neighbor.TReselectionEutraSfMedium
+					enbNeighborFreq.ReselThreshHigh = neighbor.ReselThreshHigh
+					enbNeighborFreq.ReselThreshLow = neighbor.ReselThreshLow
+					enbNeighborFreq.ReselectionPriority = neighbor.ReselectionPriority
+
+					index := strconv.Itoa(int(neighbor.Index))
+					neighbor_freq_map[index] = enbNeighborFreq
+					fmt.Println(neighbor_freq_map)
+				}
+				enbMconfig.NeighborFreqList = neighbor_freq_map
+			}
 
 			// override zero values with network/gateway configs
 			if enbMconfig.Earfcndl == 0 {

@@ -14,6 +14,7 @@ limitations under the License.
 from abc import ABC, abstractmethod
 from collections import namedtuple
 from typing import Any, Optional
+import re
 
 from magma.enodebd.data_models.data_model_parameters import ParameterName
 from magma.enodebd.device_config.configuration_init import build_desired_config
@@ -569,6 +570,10 @@ class GetObjectParametersState(EnodebAcsState):
                                            % len(names)
         request.ParameterNames.string = []
         for name in names:
+            # logger.debug('this is get object params')
+            # logger.debug(name)
+            # logger.debug( self.acs.data_model.get_parameter(name).path)
+
             path = self.acs.data_model.get_parameter(name).path
             request.ParameterNames.string.append(path)
 
@@ -618,8 +623,11 @@ class WaitGetObjectParametersState(EnodebAcsState):
                     obj_name,
                 )
                 break
+
             param_name_list = obj_to_params[obj_name]
             obj_path = self.acs.data_model.get_parameter(param_name_list[0]).path
+            # logger.debug('object path ========================' + str(obj_path))
+            # logger.debug('object path_to_val ========================' + str(path_to_val))
             if obj_path not in path_to_val:
                 break
             if not self.acs.device_cfg.has_object(obj_name):
@@ -634,6 +642,32 @@ class WaitGetObjectParametersState(EnodebAcsState):
                     name, magma_val,
                     obj_name,
                 )
+        num_neighbor = 0
+        while True:
+            obj_name =ParameterName.NEGIH_FREQ_LIST % (num_neighbor + 1)
+            if obj_name not in obj_to_params or len(obj_to_params[obj_name]) == 0:
+                logger.warning(
+                    "eNB has Neighbor %s but not defined in model",
+                    obj_name,
+                )
+                break
+            param_name_list = obj_to_params[obj_name]
+            obj_path = self.acs.data_model.get_parameter(param_name_list[0]).path
+            if obj_path not in path_to_val:
+                break
+            if not self.acs.device_cfg.has_object(obj_name):
+                self.acs.device_cfg.add_object(obj_name)
+            num_neighbor = num_neighbor + 1
+            for name in param_name_list:
+                path = self.acs.data_model.get_parameter(name).path
+                value = path_to_val[path]
+                magma_val = \
+                    self.acs.data_model.transform_for_magma(name, value)
+                self.acs.device_cfg.set_parameter_for_object(
+                    name, magma_val, obj_name
+                )
+        num_neighbor_reported = \
+                int(self.acs.device_cfg.get_parameter(ParameterName.NUM_LTE_NEIGHBOR_FREQ))
         num_plmns_reported = \
                 int(self.acs.device_cfg.get_parameter(ParameterName.NUM_PLMNS))
         if num_plmns != num_plmns_reported:
@@ -644,6 +678,51 @@ class WaitGetObjectParametersState(EnodebAcsState):
             self.acs.device_cfg.set_parameter(
                 ParameterName.NUM_PLMNS,
                 num_plmns,
+            )
+        # if num_neighbor != num_neighbor_reported:
+        #     logger.warning(
+        #         "eNB reported %d Neighbor but found %d",
+        #         num_neighbor_reported, num_neighbor,
+        #     )
+        #     self.acs.device_cfg.set_parameter(
+        #         ParameterName.NUM_LTE_NEIGHBOR_FREQ,
+        #         num_neighbor,
+        #     )
+        num_neighbor_cell = 0
+        while True:
+            obj_name = ParameterName.NEIGHBOR_CELL_LIST_N % (num_neighbor_cell + 1)
+            if obj_name not in obj_to_params or len(obj_to_params[obj_name]) == 0:
+                logger.warning(
+                    "eNB has Neighbor %s but not defined in model",
+                    obj_name,
+                )
+                break
+            param_name_list = obj_to_params[obj_name]
+            obj_path = self.acs.data_model.get_parameter(param_name_list[0]).path
+            logger.debug('object path ========================' + str(param_name_list))
+            logger.debug('object path_to_val ========================' + str(path_to_val))
+            if obj_path not in path_to_val:
+                break
+            if not self.acs.device_cfg.has_object(obj_name):
+                self.acs.device_cfg.add_object(obj_name)
+            num_neighbor_cell = num_neighbor_cell + 1
+            for name in param_name_list:
+                path = self.acs.data_model.get_parameter(name).path
+                value = path_to_val[path]
+                magma_val = \
+                    self.acs.data_model.transform_for_magma(name, value)
+                self.acs.device_cfg.set_parameter_for_object(
+                    name, magma_val, obj_name
+                )
+        num_neighbor_cell_reported = int(self.acs.device_cfg.get_parameter(ParameterName.NUM_LTE_NEIGHBOR_CELL))
+        if num_neighbor_cell != num_neighbor_cell_reported:
+            logger.warning(
+                "eNB reported %d neighbor cell but found %d",
+                num_neighbor_cell_reported, num_neighbor_cell,
+            )
+            self.acs.device_cfg.set_parameter(
+                ParameterName.NUM_LTE_NEIGHBOR_CELL,
+                num_neighbor_cell,
             )
 
         # Now we can have the desired state
@@ -708,8 +787,22 @@ class DeleteObjectsState(EnodebAcsState):
             self.acs.desired_cfg,
             self.acs.device_cfg,
         )[0]
-        request.ObjectName = \
-            self.acs.data_model.get_parameter(self.deleted_param).path
+        logger.debug('3333333333333333333333')
+        logger.debug(self.deleted_param)
+        logger.debug(self.acs.data_model.get_parameter(self.deleted_param).path)
+        desired_param = self.acs.data_model.get_parameter(self.deleted_param)
+        desired_path = desired_param.path
+        # path_parts = desired_path.split('.')
+        # # If adding enumerated object, ie. XX.N. we should add it to the
+        # # parent object XX. so strip the index
+        # if len(path_parts) > 2 and \
+        #         path_parts[-1] == '' and path_parts[-2].isnumeric():
+        #     logger.debug('Stripping index from path=%s', desired_path)
+        #     desired_path = '.'.join(path_parts[:-2]) + '.'
+        request.ObjectName = desired_path
+
+        # request.ObjectName = \
+        #     self.acs.data_model.get_parameter(self.deleted_param).path
         return AcsMsgAndTransition(request, None)
 
     def read_msg(self, message: Any) -> AcsReadMsgResult:
@@ -758,15 +851,18 @@ class AddObjectsState(EnodebAcsState):
         self.acs = acs
         self.done_transition = when_done
         self.added_param = None
+        self.adding_param = None
 
     def get_msg(self, message: Any) -> AcsMsgAndTransition:
         request = models.AddObject()
-        self.added_param = get_all_objects_to_add(
+        self.adding_param = get_all_objects_to_add(
             self.acs.desired_cfg,
             self.acs.device_cfg,
-        )[0]
+        )
+        self.added_param = self.adding_param[0]
         desired_param = self.acs.data_model.get_parameter(self.added_param)
         desired_path = desired_param.path
+        logger.debug(desired_path)
         path_parts = desired_path.split('.')
         # If adding enumerated object, ie. XX.N. we should add it to the
         # parent object XX. so strip the index
@@ -775,6 +871,9 @@ class AddObjectsState(EnodebAcsState):
             logger.debug('Stripping index from path=%s', desired_path)
             desired_path = '.'.join(path_parts[:-2]) + '.'
         request.ObjectName = desired_path
+        # logger.debug('add object path')
+        # logger.debug(desired_path)
+        # logger.debug(self.added_param)
         return AcsMsgAndTransition(request, None)
 
     def read_msg(self, message: Any) -> AcsReadMsgResult:
@@ -792,7 +891,10 @@ class AddObjectsState(EnodebAcsState):
         else:
             return AcsReadMsgResult(False, None)
         instance_n = message.InstanceNumber
-        self.acs.device_cfg.add_object(self.added_param % instance_n)
+        logger.debug('adding-------------------------------')
+        logger.debug(instance_n)
+        add_obj= re.sub(r'\d+', str(instance_n), self.added_param)
+        self.acs.device_cfg.add_object(self.added_param)
         obj_list_to_add = get_all_objects_to_add(
             self.acs.desired_cfg,
             self.acs.device_cfg,
@@ -1125,7 +1227,7 @@ class WaitInformMRebootState(EnodebAcsState):
     # Time to wait for eNodeB reboot. The measured time
     # (on BaiCells indoor eNodeB)
     # is ~110secs, so add healthy padding on top of this.
-    REBOOT_TIMEOUT = 300  # In seconds
+    REBOOT_TIMEOUT = 600  # In seconds
     # We expect that the Inform we receive tells us the eNB has rebooted
     INFORM_EVENT_CODE = 'M Reboot'
 

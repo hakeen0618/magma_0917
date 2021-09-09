@@ -6905,6 +6905,120 @@ parameters:
     required: true
     type: string
 definitions:
+  NeighborCell:
+    description: Neighbor Cell Configuration for eNodeb devices.
+    properties:
+      cell_id:
+        example: 138777000
+        format: uint32
+        maximum: 268435455
+        type: integer
+      cio:
+        enum:
+        - -24
+        - -22
+        example: -24
+        format: int32
+        type: integer
+      earfcn:
+        example: 44390
+        format: uint32
+        type: integer
+      enable:
+        example: true
+        type: boolean
+      index:
+        example: 1
+        format: uint32
+        maximum: 16
+        minimum: 1
+        type: integer
+      pci:
+        example: 260
+        exclusiveMinimum: true
+        format: uint32
+        maximum: 503
+        minimum: 0
+        type: integer
+      plmn:
+        example: "00101"
+        pattern: ^(\d{5,6})$
+        type: string
+        x-nullable: false
+      q_offset:
+        enum:
+        - -24
+        - -22
+        - -20
+        example: -24
+        format: int32
+        type: integer
+      tac:
+        example: 1
+        format: uint32
+        maximum: 65535
+        minimum: 1
+        type: integer
+    type: object
+  NeighborFreq:
+    description: Neighbor Freq Configuration for eNodeb devices.
+    properties:
+      earfcn:
+        example: 1
+        format: uint32
+        type: integer
+      enable:
+        example: true
+        type: boolean
+      index:
+        example: 1
+        format: uint32
+        maximum: 8
+        minimum: 1
+        type: integer
+      p_max:
+        example: 1
+        format: int32
+        type: integer
+      q_offset_range:
+        enum:
+        - -24
+        - -22
+        example: -24
+        format: int32
+        type: integer
+      q_rx_lev_min_sib5:
+        example: 1
+        format: int32
+        maximum: -22
+        minimum: -70
+        type: integer
+      resel_thresh_high:
+        example: 31
+        format: uint32
+        type: integer
+      resel_thresh_low:
+        example: 31
+        format: uint32
+        type: integer
+      reselection_priority:
+        example: 7
+        format: uint32
+        type: integer
+      t_reselection_eutra:
+        example: 1
+        format: uint32
+        type: integer
+      t_reselection_eutra_sf_medium:
+        enum:
+        - 25
+        - 50
+        - 75
+        - 100
+        example: 25
+        format: uint32
+        type: integer
+    type: object
   aaa_server:
     description: aaa server configuration
     properties:
@@ -7337,20 +7451,6 @@ definitions:
         x-nullable: false
     required:
     - active_gateway
-    type: object
-  cellConfiguration:
-    description: cell Configuration for  eNodeb devices.
-    minLength: 1
-    properties:
-      mme_pool_1:
-        example: ""
-        type: string
-      mme_pool_2:
-        example: ""
-        type: string
-      plmn_id:
-        example: "00101"
-        type: string
     type: object
   cellular_gateway_pool:
     description: Highly available gateway pool in an LTE network
@@ -8020,6 +8120,14 @@ definitions:
       LTE network and gateway configuration.
     minLength: 1
     properties:
+      NeighborCellList:
+        items:
+          $ref: '#/definitions/NeighborCell'
+        type: array
+      NeighborFreqList:
+        items:
+          $ref: '#/definitions/NeighborFreq'
+        type: array
       bandwidth_mhz:
         enum:
         - 3
@@ -8056,8 +8164,6 @@ definitions:
         maximum: 503
         minimum: 0
         type: integer
-      radioConfiguration:
-        $ref: '#/definitions/radioConfiguration'
       special_subframe_pattern:
         example: 7
         format: uint32
@@ -10873,25 +10979,6 @@ definitions:
     - flow_list
     - priority
     type: object
-  powerControlParameters:
-    description: power control param Configuration for  eNodeb devices.
-    minLength: 1
-    properties:
-      pa:
-        example: -3
-        format: int32
-        type: integer
-      pb:
-        example: 0
-        format: int32
-        maximum: 3
-        minimum: 0
-        type: integer
-      reference_signal_power:
-        example: 12
-        format: int32
-        type: integer
-    type: object
   prom_alert_config:
     properties:
       alert:
@@ -11120,15 +11207,6 @@ definitions:
         maximum: 15
         minimum: 0
         type: integer
-    type: object
-  radioConfiguration:
-    description: Radio Configuration for  eNodeb devices.
-    minLength: 1
-    properties:
-      cellConfiguration:
-        $ref: '#/definitions/cellConfiguration'
-      powerControlParameters:
-        $ref: '#/definitions/powerControlParameters'
     type: object
   radius_config:
     description: built-in radius server configuration

@@ -108,6 +108,8 @@ class EnodebConfiguration():
         if param_name in self._numbered_objects:
             raise ConfigurationError("Configuration already has object")
         self._numbered_objects[param_name] = {}
+        logger.debug('add object------------------------------------')
+        logger.debug(self._numbered_objects)
 
     def delete_object(self, param_name: ParameterName) -> None:
         if param_name not in self._numbered_objects:
@@ -141,6 +143,7 @@ class EnodebConfiguration():
         self,
         object_name: ParameterName,
     ) -> List[ParameterName]:
+        self._assert_param_in_model(object_name)
         return list(self._numbered_objects[object_name].keys())
 
     def get_debug_info(self) -> str:
