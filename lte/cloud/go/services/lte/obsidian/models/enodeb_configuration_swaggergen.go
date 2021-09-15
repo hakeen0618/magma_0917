@@ -36,10 +36,24 @@ type EnodebConfiguration struct {
 	// earfcndl
 	Earfcndl uint32 `json:"earfcndl,omitempty"`
 
+	// management server
+	ManagementServer *ManagementServer `json:"managementServer,omitempty"`
+
+	// mme pool 1
+	// Format: ipv4
+	MmePool1 strfmt.IPv4 `json:"mme_pool_1,omitempty"`
+
+	// mme pool 2
+	// Format: ipv4
+	MmePool2 strfmt.IPv4 `json:"mme_pool_2,omitempty"`
+
 	// pci
 	// Maximum: 503
 	// Minimum: > 0
 	Pci uint32 `json:"pci,omitempty"`
+
+	// radio configuration
+	RadioConfiguration *RadioConfiguration `json:"radioConfiguration,omitempty"`
 
 	// special subframe pattern
 	// Maximum: 9
@@ -48,6 +62,9 @@ type EnodebConfiguration struct {
 	// subframe assignment
 	// Maximum: 6
 	SubframeAssignment uint32 `json:"subframe_assignment,omitempty"`
+
+	// sync 1588
+	Sync1588 *Sync1588 `json:"sync_1588,omitempty"`
 
 	// tac
 	// Maximum: 65535
@@ -75,7 +92,23 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateManagementServer(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMmePool1(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMmePool2(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePci(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRadioConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,6 +117,10 @@ func (m *EnodebConfiguration) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateSubframeAssignment(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSync1588(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -200,6 +237,50 @@ func (m *EnodebConfiguration) validateDeviceClass(formats strfmt.Registry) error
 	return nil
 }
 
+func (m *EnodebConfiguration) validateManagementServer(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ManagementServer) { // not required
+		return nil
+	}
+
+	if m.ManagementServer != nil {
+		if err := m.ManagementServer.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("managementServer")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *EnodebConfiguration) validateMmePool1(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MmePool1) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("mme_pool_1", "body", "ipv4", m.MmePool1.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *EnodebConfiguration) validateMmePool2(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.MmePool2) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("mme_pool_2", "body", "ipv4", m.MmePool2.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *EnodebConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Pci) { // not required
@@ -212,6 +293,24 @@ func (m *EnodebConfiguration) validatePci(formats strfmt.Registry) error {
 
 	if err := validate.MaximumInt("pci", "body", int64(m.Pci), 503, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *EnodebConfiguration) validateRadioConfiguration(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RadioConfiguration) { // not required
+		return nil
+	}
+
+	if m.RadioConfiguration != nil {
+		if err := m.RadioConfiguration.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("radioConfiguration")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -238,6 +337,24 @@ func (m *EnodebConfiguration) validateSubframeAssignment(formats strfmt.Registry
 
 	if err := validate.MaximumInt("subframe_assignment", "body", int64(m.SubframeAssignment), 6, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *EnodebConfiguration) validateSync1588(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Sync1588) { // not required
+		return nil
+	}
+
+	if m.Sync1588 != nil {
+		if err := m.Sync1588.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("sync_1588")
+			}
+			return err
+		}
 	}
 
 	return nil
